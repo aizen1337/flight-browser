@@ -1,124 +1,128 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-
-const inter = Inter({ subsets: ['latin'] })
-
+import NavbarComponent from '@/components/NavbarComponent'
+import { Options } from '@/components/DatepickerOptions'
+import { useState } from 'react'
+import Datepicker from "tailwind-datepicker-react"
+import Input from '@/components/Input'
+import FlightOptions from '@/types/FlightOptions'
+import Head from 'next/head'
+import { SearchButton } from '@/components/SearchButton'
+import AdvancedOptionsDrawer from '@/components/AdvancedOptionsDrawer'
+import Spinner from '@/components/Spinner'
+import LoadingSkeleton from '@/components/LoadingSkeleton'
+import Link from 'next/link'
+import Offer from '@/components/Offer'
+import RoundTripRadio from '@/components/RoundTripRadio'
+import { Alert } from 'flowbite-react'
 export default function Home() {
+  const [leftShow,setLeftShow] = useState(false)
+  const [open,setOpen] = useState(false)
+  const [rightShow,setRightShow] = useState(false)
+  const [homecomingDate,setHomecomingDate] = useState(Options)
+  const [roundTrip, setRoundTrip] = useState(true)
+  const [loading,setLoading] = useState(false)
+  const [error,setError] = useState(null)
+  const [destinationError,setDestinationError] = useState<string | null>(null)
+  const [originError,setOriginError] = useState<string | null>(null)
+  const [dateError, setDateError] = useState<string | null>(null)
+  const [offers,setOffers] = useState<any>()
+  const handleLeftClose = (state: boolean) => {
+		setLeftShow(state)
+	}
+  const handleRightClose  = (state: boolean) => {
+    setRightShow(state)
+	}
+  const [formData,setFormData] = useState<FlightOptions>(
+    {
+      originLocationCode: '',
+      destinationLocationCode: '',
+      departureDate: new Date().toISOString().slice(0,10),
+      adults: 1
+    }
+  )
+  async function search(form_data: FlightOptions) {
+    setOffers(null)
+    if(form_data.originLocationCode === '') {
+      setOriginError("Wybierz lotnisko wylotu")
+      return
+    }
+    else if(form_data.destinationLocationCode === '') {
+      setDestinationError("Wybierz lotnisko przylotu")
+      return
+    }
+    else if(form_data.returnDate && new Date(form_data.returnDate).getMilliseconds() < new Date(form_data.departureDate).getMilliseconds()) {
+      setDateError("Data powrotu powinna być późniejsza niż data odlotu")
+      return
+    }
+    else {
+    setLoading(true)
+    const url = new URL('http://localhost:3000/api/searchForFlight?')
+    await fetch(url, {
+      method: "POST",
+      body: JSON.stringify(form_data)
+    })
+    .then((res) => res.json())
+    .then(async (data) => 
+      {
+      let currentOffers = await data.flightOffers
+      setOffers(currentOffers)
+      setLoading(false)
+      })
+    .catch((error) => {
+      setError(error.message)
+      setLoading(false)
+    })
+    }
+  }
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">pages/index.tsx</code>
+    <>
+    {dateError && <Alert>{dateError}</Alert>}
+    <Head>
+      <title>Zadanie rekrutacyjne</title>
+    </Head>
+    <NavbarComponent/>
+    <main className="flex h-full flex-col items-center mt-20">
+        <section className="flex flex-col items-center justify-center w-8/10">
+          <RoundTripRadio setRound={setRoundTrip} round={roundTrip}/>
+          <div className="flex md:w-2/4 items-center justify-evenly gap-2">
+            <Datepicker show={leftShow} setShow={handleLeftClose} onChange={(date) => {
+              setFormData(prevState => ({...prevState, departureDate: date.toISOString().slice(0,10)}))
+              setHomecomingDate(prevState => ({...prevState, minDate: date, defaultDate: date}))
+            }} options={Options}/>
+            {roundTrip && <Datepicker show={rightShow} setShow={handleRightClose} onChange={(date) => {
+              setFormData(prevState => ({...prevState, returnDate: date.toISOString().slice(0,10)}))
+              console.log(homecomingDate)
+            }} options={homecomingDate}/>}
+          </div>
+          <div className="flex w-full flex-col items-center justify-center md:flex-row">
+          <Input error={originError} type='from' onChange={(e: any ) => setFormData(prevState => ({...prevState, originLocationCode: e.target.value}))}/>
+          <Input error={destinationError} type='to' onChange={(e: any) => setFormData(prevState => ({...prevState, destinationLocationCode: e.target.value}))}/>
+          <button type="button" onClick={() => setOpen(true)} className="text-white bg-gradient-to-br p-4 pl-10 h-14 from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg w-full text-sm px-5 py-2.5 text-center">Klasa podróży i pasażerowie (opcjonalnie)</button>
+          <AdvancedOptionsDrawer isOpen={open} setOpen={setOpen} setQueryOptions={setFormData}/>
+          </div>
+          <SearchButton onClick={async () => await search(formData)}/>
+        </section>
+        {loading && 
+        <>
+        <p className='p-4 font-bold text-lg'>
+        Wyszukujemy dla ciebie najlepsze oferty z {formData.originLocationCode} do {formData.destinationLocationCode}
         </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`${inter.className} mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p
-            className={`${inter.className} m-0 max-w-[30ch] text-sm opacity-50`}
-          >
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`${inter.className} mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p
-            className={`${inter.className} m-0 max-w-[30ch] text-sm opacity-50`}
-          >
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`${inter.className} mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p
-            className={`${inter.className} m-0 max-w-[30ch] text-sm opacity-50`}
-          >
-            Discover and deploy boilerplate example Next.js&nbsp;projects.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`${inter.className} mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p
-            className={`${inter.className} m-0 max-w-[30ch] text-sm opacity-50`}
-          >
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+        <Spinner/> 
+        </>}
+        {error && <p className='p-4 font-bold text-lg text-red'>Wystąpił błąd - {error}</p>}
+        {offers && 
+        <h1 className='p-4 font-bold text-lg'>Znaleźliśmy dla ciebie ponad {offers?.meta?.count} ofert</h1>
+        }
+        <section className='grid grid-cols-1 gap-3 md:w-1/2 w-full'>
+        {loading && 
+        <LoadingSkeleton/>
+        }
+        {offers && offers?.data?.map((offer: any) => (
+          <Link key={offer.id} className='flex items-center justify-center' href={`${offer.id}`}>
+            <Offer offer={offer}/>
+          </Link>
+        ))}
+        </section>
     </main>
+    </>
   )
 }
