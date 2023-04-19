@@ -1,6 +1,6 @@
 import NavbarComponent from '@/components/NavbarComponent'
 import { Options } from '@/components/DatepickerOptions'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Datepicker from "tailwind-datepicker-react"
 import Input from '@/components/Input'
 import FlightOptions from '@/types/FlightOptions'
@@ -9,7 +9,6 @@ import { SearchButton } from '@/components/SearchButton'
 import AdvancedOptionsDrawer from '@/components/AdvancedOptionsDrawer'
 import Spinner from '@/components/Spinner'
 import LoadingSkeleton from '@/components/LoadingSkeleton'
-import Link from 'next/link'
 import Offer from '@/components/Offer'
 import RoundTripRadio from '@/components/RoundTripRadio'
 export default function Home() {
@@ -70,7 +69,6 @@ export default function Home() {
       {
       let currentOffers = await data.flightOffers
       setOffers(currentOffers)
-      console.log(currentOffers)
       setLoading(false)
       })
     .catch((error) => {
