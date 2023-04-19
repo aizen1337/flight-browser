@@ -25,9 +25,9 @@ const AdvancedOptionsDrawer = ({isOpen,setOpen,setQueryOptions}: Props) => {
           (isOpen ? " translate-x-0 " : " translate-x-full ")
         }
       >
-        <article className="relative w-screen max-w-lg pb-10 flex flex-col items-center space-y-6 overflow-y-auto h-full">
-          <header className="p-4 font-bold text-lg text-white w-full flex align-middle items-center justify-around">
-            <p>Wybierz klasę i liczbę pasażerów</p>
+        <article className="relative w-screen max-w-lg pb-10 flex flex-col items-center space-y-6 overflow-y-auto h-full text-center">
+          <header className="p-4 font-bold text-lg text-white w-full flex align-middle items-center justify-around text">
+            <p className='p-4 font-bold text-lg text-white'>Wybierz klasę i liczbę pasażerów</p>
             <p onClick={() => setOpen(false)}><svg aria-hidden="true" className="w-5 h-5 cursor-pointer"fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"></path></svg></p>
           </header>
           <div className='flex flex-col items-center justify-evenly w-4/5'>
@@ -37,11 +37,11 @@ const AdvancedOptionsDrawer = ({isOpen,setOpen,setQueryOptions}: Props) => {
                 <NumberInput type="Niemowlęta" onChange={(e: any) => setQueryOptions(prevState => ({...prevState, infants: e.target.value}))}/>
             </div>
             <div className="flight-class">
-              <p className='p-4 font-bold text-lg'>Wybierz klasę podróży</p>
+              <p className='p-4 font-bold text-lg text-white'>Wybierz klasę podróży</p>
               <FlightClasses setQueryOptions={setQueryOptions}/>
             </div>
             <div className="stops">
-              <p className='p-4 font-bold text-lg'>Z przesiadkami?</p>
+              <p className='p-4 font-bold text-lg text-white'>Z przesiadkami?</p>
               <StopsRadio setQueryOptions={setQueryOptions}/>
             </div>
           </div>

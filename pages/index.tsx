@@ -106,16 +106,16 @@ export default function Home() {
         </section>
         {loading && 
         <>
-        <p className='p-4 font-bold text-lg'>
+        <p className='p-4 font-bold text-lg text-white'>
         Wyszukujemy dla ciebie najlepsze oferty z {formData.originLocationCode} do {formData.destinationLocationCode}
         </p>
         <Spinner/> 
         </>}
         {error && <p className='p-4 font-bold text-lg text-red'>Wystąpił błąd - {error}</p>}
         {offers && offers.length >= 10 &&
-        <h1 className='p-4 font-bold text-lg'>Znaleźliśmy dla ciebie ponad {offers?.meta?.count} ofert</h1>
+        <h1 className='p-4 font-bold text-lg text-white'>Znaleźliśmy dla ciebie ponad {offers?.meta?.count} ofert</h1>
         }
-        {offers && <h1 className='p-4 font-bold text-lg'>Znaleźliśmy dla ciebie {offers?.meta?.count} ofert</h1>}
+        {offers && <h1 className='p-4 font-bold text-lg text-white'>Znaleźliśmy dla ciebie {offers?.meta?.count} ofert</h1>}
         <section className='grid grid-cols-1 gap-3 md:w-1/2 w-full'>
         {loading && 
         <LoadingSkeleton/>

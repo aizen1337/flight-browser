@@ -27,7 +27,7 @@ const Offer = ({offer,dictionaries}: Props) => {
         <p className='font-bold'>Na miejscu w {flight.arrival.iataCode}</p>
         {polishDateFormatter(new Date(flight.arrival.at))}
         </div>
-        <p>Przelot organizuje {dictionaries.carriers[flight.carrierCode  || flight.operating.carrierCode ]} samolotem {dictionaries.aircraft[flight.aircraft.code]}</p>
+        <p>Przelot organizuje {dictionaries.carriers[flight.carrierCode || flight.operating.carrierCode ]} samolotem {dictionaries.aircraft[flight.aircraft.code]}</p>
       </>
     ))}
     </section>
@@ -44,7 +44,7 @@ const Offer = ({offer,dictionaries}: Props) => {
         <p className='font-bold'>Na miejscu w {flight.arrival.iataCode}</p>
         {polishDateFormatter(new Date(flight.arrival.at))}
         </div>
-        <p>Przelot organizuje {dictionaries.carriers[ flight.carrierCode  || flight.operating.carrierCode]} samolotem {dictionaries.aircraft[flight.aircraft.code]}</p>
+        <p>Przelot organizuje {dictionaries.carriers[ flight.carrierCode || flight.operating.carrierCode]} samolotem {dictionaries.aircraft[flight.aircraft.code]}</p>
         </>
     ))}
     </section>
