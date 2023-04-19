@@ -1,30 +1,34 @@
 import React from 'react'
 type Props = {
-    offer:  any
+    offer:  any,
+    dictionaries: any
 }
-const Offer = (offer: Props) => {
-  const originDetails = offer.offer.itineraries[0].segments
-  const homecomingDetails = offer.offer?.itineraries[1]?.segments
+const Offer = ({offer,dictionaries}: Props) => {
+  const originDetails = offer.itineraries[0].segments
+  const homecomingDetails = offer?.itineraries[1]?.segments
   function polishDateFormatter(date: Date) {
     return new Intl.DateTimeFormat('pl-PL', { dateStyle: 'long', timeStyle: 'short', timeZone: 'Europe/Warsaw' }).format(date)
   }
   return (
     <div className="w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700 hover:bg-zinc-900 hover:text-white">
     <div className="flex items-baseline text-gray-500 m-4">
-        <span className="text-5xl font-extrabold tracking-tight">{offer.offer.price.total} <small className='text-lg'>PLN</small></span>
+        <span className="text-5xl font-extrabold tracking-tight">{offer.price.total} <small className='text-lg'>PLN</small></span>
         <span className="text-3xl font-semibold"> </span>
     </div>
     <section className='flex sm:flex-row flex-col w-full justify-between'>
     <section className="mb-4 text-sm font-medium text-gray-500 dark:text-gray-400">
     <h1 className="font-bold">Trasa docelowa:</h1>
     {originDetails.map((flight: any, index: number) => (
+      <>
         <div key={index}>
-        <p className='font-bold'>Wylot z {flight.departure.iataCode}</p>
+        <p className='font-bold'>Wylot z {flight.departure.iataCode} ({dictionaries.carriers[flight.operating.carrierCode]})</p>
         {polishDateFormatter(new Date(flight.departure.at))}
         <br/>
-        <p className='font-bold'>Na miejscu w {flight.arrival.iataCode}</p>
+        <p className='font-bold'>Na miejscu w {flight.arrival.iataCode}  ({dictionaries.carriers[flight.operating.carrierCode]})</p>
         {polishDateFormatter(new Date(flight.arrival.at))}
         </div>
+        <p>{dictionaries.aircraft[flight.aircraft.code]}</p>
+      </>
     ))}
     </section>
     <hr className='m-4'/>
@@ -33,13 +37,15 @@ const Offer = (offer: Props) => {
     <section className="mb-4 text-sm font-medium text-gray-500 dark:text-gray-400">
     <h1 className="font-bold">Trasa powrotna:</h1> 
     {homecomingDetails.map((flight: any, index: number) => (
+        <>
         <div key={index}>
-        <p className='font-bold'>Wylot z {flight.departure.iataCode}</p>
+        <p className='font-bold'>Wylot z {flight.departure.iataCode}  ({dictionaries.carriers[flight.operating.carrierCode]})</p>
         {polishDateFormatter(new Date(flight.departure.at))}
-        <br/>
-        <p className='font-bold'>Na miejscu w {flight.arrival.iataCode}</p>
+        <p className='font-bold'>Na miejscu w {flight.arrival.iataCode}  ({dictionaries.carriers[flight.operating.carrierCode]})</p>
         {polishDateFormatter(new Date(flight.arrival.at))}
         </div>
+        <p>{dictionaries.aircraft[flight.aircraft.code]}</p>
+        </>
     ))}
     </section>
     </>

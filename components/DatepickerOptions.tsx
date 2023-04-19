@@ -1,4 +1,4 @@
-export var Options = {
+export const Options = {
     title: "Data wylotu",
 	autoHide: true,
 	todayBtn: false,

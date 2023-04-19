@@ -1,6 +1,6 @@
 import NavbarComponent from '@/components/NavbarComponent'
 import { Options } from '@/components/DatepickerOptions'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Datepicker from "tailwind-datepicker-react"
 import Input from '@/components/Input'
 import FlightOptions from '@/types/FlightOptions'
@@ -12,7 +12,6 @@ import LoadingSkeleton from '@/components/LoadingSkeleton'
 import Link from 'next/link'
 import Offer from '@/components/Offer'
 import RoundTripRadio from '@/components/RoundTripRadio'
-import { Alert } from 'flowbite-react'
 export default function Home() {
   const [leftShow,setLeftShow] = useState(false)
   const [open,setOpen] = useState(false)
@@ -49,14 +48,20 @@ export default function Home() {
       setDestinationError("Wybierz lotnisko przylotu")
       return
     }
-    else if(form_data.returnDate && new Date(form_data.returnDate).getMilliseconds() < new Date(form_data.departureDate).getMilliseconds()) {
+    else if(form_data.returnDate && (new Date(form_data.returnDate).getTime() < new Date(form_data.departureDate).getTime())) {
       setDateError("Data powrotu powinna być późniejsza niż data odlotu")
+      return
+    }
+    else if(form_data.originLocationCode === form_data.destinationLocationCode) {
+      setOriginError("Miejsce wylotu i miejsce docelowe nie mogą być takie same")
       return
     }
     else {
     setLoading(true)
-    const url = new URL('http://localhost:3000/api/searchForFlight?')
-    await fetch(url, {
+    setDateError(null)
+    setDestinationError(null)
+    setOriginError(null)
+    await fetch('/api/searchForFlight?', {
       method: "POST",
       body: JSON.stringify(form_data)
     })
@@ -65,6 +70,7 @@ export default function Home() {
       {
       let currentOffers = await data.flightOffers
       setOffers(currentOffers)
+      console.log(currentOffers)
       setLoading(false)
       })
     .catch((error) => {
@@ -75,7 +81,6 @@ export default function Home() {
   }
   return (
     <>
-    {dateError && <Alert>{dateError}</Alert>}
     <Head>
       <title>Zadanie rekrutacyjne</title>
     </Head>
@@ -86,19 +91,19 @@ export default function Home() {
           <div className="flex md:w-2/4 items-center justify-evenly gap-2">
             <Datepicker show={leftShow} setShow={handleLeftClose} onChange={(date) => {
               setFormData(prevState => ({...prevState, departureDate: date.toISOString().slice(0,10)}))
-              setHomecomingDate(prevState => ({...prevState, minDate: date, defaultDate: date}))
+              setHomecomingDate(prevState => ({...prevState, minDate: date}))
             }} options={Options}/>
             {roundTrip && <Datepicker show={rightShow} setShow={handleRightClose} onChange={(date) => {
               setFormData(prevState => ({...prevState, returnDate: date.toISOString().slice(0,10)}))
-              console.log(homecomingDate)
             }} options={homecomingDate}/>}
           </div>
+          {dateError && <p className='text-red-500'>{dateError}</p>}
           <div className="flex w-full flex-col items-center justify-center md:flex-row">
           <Input error={originError} type='from' onChange={(e: any ) => setFormData(prevState => ({...prevState, originLocationCode: e.target.value}))}/>
           <Input error={destinationError} type='to' onChange={(e: any) => setFormData(prevState => ({...prevState, destinationLocationCode: e.target.value}))}/>
-          <button type="button" onClick={() => setOpen(true)} className="text-white bg-gradient-to-br p-4 pl-10 h-14 from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg w-full text-sm px-5 py-2.5 text-center">Klasa podróży i pasażerowie (opcjonalnie)</button>
           <AdvancedOptionsDrawer isOpen={open} setOpen={setOpen} setQueryOptions={setFormData}/>
           </div>
+          <button type="button" onClick={() => setOpen(true)} className="text-white bg-gradient-to-br p-4 pl-10 h-14 from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg w-full text-sm px-5 py-2.5 text-center">Klasa podróży i pasażerowie (opcjonalnie)</button>
           <SearchButton onClick={async () => await search(formData)}/>
         </section>
         {loading && 
@@ -109,17 +114,16 @@ export default function Home() {
         <Spinner/> 
         </>}
         {error && <p className='p-4 font-bold text-lg text-red'>Wystąpił błąd - {error}</p>}
-        {offers && 
+        {offers && offers.length >= 10 &&
         <h1 className='p-4 font-bold text-lg'>Znaleźliśmy dla ciebie ponad {offers?.meta?.count} ofert</h1>
         }
+        {offers && <h1 className='p-4 font-bold text-lg'>Znaleźliśmy dla ciebie {offers?.meta?.count} ofert</h1>}
         <section className='grid grid-cols-1 gap-3 md:w-1/2 w-full'>
         {loading && 
         <LoadingSkeleton/>
         }
         {offers && offers?.data?.map((offer: any) => (
-          <Link key={offer.id} className='flex items-center justify-center' href={`${offer.id}`}>
-            <Offer offer={offer}/>
-          </Link>
+            <Offer offer={offer} dictionaries={offers.dictionaries} key={offer.id}/>
         ))}
         </section>
     </main>

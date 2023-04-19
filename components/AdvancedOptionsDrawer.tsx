@@ -2,6 +2,7 @@ import FlightOptions from '@/types/FlightOptions'
 import NumberInput from '@/components/NumberInput'
 import React from 'react'
 import FlightClasses from './FlightClasses'
+import StopsRadio from './StopsRadio'
 type Props = {
     isOpen: boolean
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -35,8 +36,14 @@ const AdvancedOptionsDrawer = ({isOpen,setOpen,setQueryOptions}: Props) => {
                 <NumberInput type="Dzieci" onChange={(e: any) => setQueryOptions(prevState => ({...prevState, children: e.target.value}))}/>
                 <NumberInput type="Niemowlęta" onChange={(e: any) => setQueryOptions(prevState => ({...prevState, infants: e.target.value}))}/>
             </div>
+            <div className="flight-class">
               <p className='p-4 font-bold text-lg'>Wybierz klasę podróży</p>
-            <FlightClasses setQueryOptions={setQueryOptions}/>
+              <FlightClasses setQueryOptions={setQueryOptions}/>
+            </div>
+            <div className="stops">
+              <p className='p-4 font-bold text-lg'>Z przesiadkami?</p>
+              <StopsRadio setQueryOptions={setQueryOptions}/>
+            </div>
           </div>
         </article>
       </section>
