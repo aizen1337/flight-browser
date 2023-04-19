@@ -21,13 +21,13 @@ const Offer = ({offer,dictionaries}: Props) => {
     {originDetails.map((flight: any, index: number) => (
       <>
         <div key={index}>
-        <p className='font-bold'>Wylot z {flight.departure.iataCode} ({dictionaries.carriers[flight.operating.carrierCode]})</p>
+        <p className='font-bold'>Wylot z {flight.departure.iataCode}</p>
         {polishDateFormatter(new Date(flight.departure.at))}
         <br/>
-        <p className='font-bold'>Na miejscu w {flight.arrival.iataCode}  ({dictionaries.carriers[flight.operating.carrierCode]})</p>
+        <p className='font-bold'>Na miejscu w {flight.arrival.iataCode}</p>
         {polishDateFormatter(new Date(flight.arrival.at))}
         </div>
-        <p>{dictionaries.aircraft[flight.aircraft.code]}</p>
+        <p>Przelot organizuje {dictionaries.carriers[flight.carrierCode  || flight.operating.carrierCode ]} samolotem {dictionaries.aircraft[flight.aircraft.code]}</p>
       </>
     ))}
     </section>
@@ -39,12 +39,12 @@ const Offer = ({offer,dictionaries}: Props) => {
     {homecomingDetails.map((flight: any, index: number) => (
         <>
         <div key={index}>
-        <p className='font-bold'>Wylot z {flight.departure.iataCode}  ({dictionaries.carriers[flight.operating.carrierCode]})</p>
+        <p className='font-bold'>Wylot z {flight.departure.iataCode}</p>
         {polishDateFormatter(new Date(flight.departure.at))}
-        <p className='font-bold'>Na miejscu w {flight.arrival.iataCode}  ({dictionaries.carriers[flight.operating.carrierCode]})</p>
+        <p className='font-bold'>Na miejscu w {flight.arrival.iataCode}</p>
         {polishDateFormatter(new Date(flight.arrival.at))}
         </div>
-        <p>{dictionaries.aircraft[flight.aircraft.code]}</p>
+        <p>Przelot organizuje {dictionaries.carriers[ flight.carrierCode  || flight.operating.carrierCode]} samolotem {dictionaries.aircraft[flight.aircraft.code]}</p>
         </>
     ))}
     </section>
