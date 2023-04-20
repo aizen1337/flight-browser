@@ -6,7 +6,7 @@ type Props = {
 }
 const Input = (props: Props) => {
   return (
-    <div className='w-full m-5'>
+    <div className='w-full mt-2 md:mb-2'>
     <label htmlFor="search" className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">{props.type == 'from' ? 'Skąd' : "Dokąd"}</label>
         <div className="relative">
         <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">

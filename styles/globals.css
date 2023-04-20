@@ -20,4 +20,20 @@ body {
   color: rgb(var(--foreground-rgb));
   background-color: #262626;
   max-width: 100vw;
+  overflow-x: hidden;
+}
+body::-webkit-scrollbar, #drawer::-webkit-scrollbar {
+  background-color: #000;
+  width: 12px;
+  border-radius: 10px;
+}
+
+body::-webkit-scrollbar-track, #drawer::-webkit-scrollbar-track {
+  border-radius: 10px;
+  box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.3);
+}
+
+body::-webkit-scrollbar-thumb,  #drawer::-webkit-scrollbar-thumb {
+  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(.5, #a520ca), color-stop(1, #2681cc));
+  border-radius: 10px;
 }

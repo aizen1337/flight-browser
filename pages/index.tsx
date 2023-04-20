@@ -84,9 +84,9 @@ export default function Home() {
     </Head>
     <NavbarComponent/>
     <main className="flex h-full flex-col items-center mt-20">
-        <section className="flex flex-col items-center justify-center w-8/10">
+        <section className="flex flex-col items-center justify-center w-screen lg:w-5/12 p-5">
           <RoundTripRadio setRound={setRoundTrip} round={roundTrip}/>
-          <div className="flex md:w-2/4 items-center justify-evenly gap-2">
+          <div className="flex w-full items-center justify-evenly gap-2">
             <Datepicker show={leftShow} setShow={handleLeftClose} onChange={(date) => {
               setFormData(prevState => ({...prevState, departureDate: date.toISOString().slice(0,10)}))
               setHomecomingDate(prevState => ({...prevState, minDate: date}))
@@ -96,12 +96,12 @@ export default function Home() {
             }} options={homecomingDate}/>}
           </div>
           {dateError && <p className='text-red-500'>{dateError}</p>}
-          <div className="flex w-full flex-col items-center justify-center md:flex-row">
+          <div className="flex w-full flex-col items-center justify-center gap-2 md:flex-row">
           <Input error={originError} type='from' onChange={(e: any ) => setFormData(prevState => ({...prevState, originLocationCode: e.target.value}))}/>
           <Input error={destinationError} type='to' onChange={(e: any) => setFormData(prevState => ({...prevState, destinationLocationCode: e.target.value}))}/>
           <AdvancedOptionsDrawer isOpen={open} setOpen={setOpen} setQueryOptions={setFormData}/>
           </div>
-          <button type="button" onClick={() => setOpen(true)} className="text-white bg-gradient-to-br p-4 pl-10 h-14 from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg w-full text-sm px-5 py-2.5 text-center">Klasa podróży i pasażerowie (opcjonalnie)</button>
+          <button type="submit" onClick={() => setOpen(true)} className="text-white bg-gradient-to-br p-4 pl-10 h-14 from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg w-full text-sm px-5 py-2.5 text-center mt-4">Klasa podróży i pasażerowie</button>
           <SearchButton onClick={async () => await search(formData)}/>
         </section>
         {loading && 
@@ -112,11 +112,12 @@ export default function Home() {
         <Spinner/> 
         </>}
         {error && <p className='p-4 font-bold text-lg text-red'>Wystąpił błąd - {error}</p>}
-        {offers && offers.length >= 10 &&
+        {offers && offers.length == 10 &&
         <h1 className='p-4 font-bold text-lg text-white'>Znaleźliśmy dla ciebie ponad {offers?.meta?.count} ofert</h1>
         }
+        {offers && offers.data.length == 0 && <h1 className='p-4 font-bold text-lg text-white'>Nie znaleźliśmy żadnych pasujących ofert</h1>}
         {offers && <h1 className='p-4 font-bold text-lg text-white'>Znaleźliśmy dla ciebie {offers?.meta?.count} ofert</h1>}
-        <section className='grid grid-cols-1 gap-3 md:w-1/2 w-full'>
+        <section className='grid grid-cols-1 gap-3 md:w-1/2 w-full p-5'>
         {loading && 
         <LoadingSkeleton/>
         }

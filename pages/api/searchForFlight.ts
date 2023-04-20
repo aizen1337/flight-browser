@@ -4,7 +4,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.setHeader("Content-Type", "application/json")
     res.setHeader("Access-Control-Allow-Origin", "*")
     const query: FlightOptions = JSON.parse(req.body)
-    const auth = await fetch("https://flight-browser.vercel.app/api/login", {
+    const apiEndpoint = process.env.NODE_ENV == "development" ? "http://localhost:3000/api/login" : "https://flight-browser.vercel.app/api/login"
+    const auth = await fetch(apiEndpoint, {
         method: "POST"
     })
     .then(async (response) => {

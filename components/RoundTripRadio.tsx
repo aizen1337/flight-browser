@@ -8,7 +8,7 @@ type Props = {
 const RoundTripRadio = (props: Props) => {
     const [checked,setChecked] = useState<string>()
   return (
-    <ul className="grid w-full gap-6 md:grid-cols-2 m-4">
+    <ul className="grid w-full gap-2 md:grid-cols-2 m-4">
     <li>
         <input type="radio" id="one-way-trip" name="one-way-trip" value="false" className="hidden peer" onChange={() => {
             setChecked("false")
