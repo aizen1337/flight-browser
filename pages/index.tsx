@@ -1,6 +1,6 @@
 import NavbarComponent from '@/components/NavbarComponent'
 import { Options } from '@/components/DatepickerOptions'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Datepicker from "tailwind-datepicker-react"
 import Input from '@/components/Input'
 import FlightOptions from '@/types/FlightOptions'
@@ -23,6 +23,13 @@ export default function Home() {
   const [originError,setOriginError] = useState<string | null>(null)
   const [dateError, setDateError] = useState<string | null>(null)
   const [offers,setOffers] = useState<any>()
+  useEffect(() => {
+    const offersSection = document.getElementById('offers-section')
+    if(offersSection) {
+      offersSection.scrollIntoView({behavior: 'smooth'})
+    }
+  },
+  [offers])
   const handleLeftClose = (state: boolean) => {
 		setLeftShow(state)
 	}
@@ -57,7 +64,9 @@ export default function Home() {
     }
     else {
     setLoading(true)
+    setError(null)
     setDateError(null)
+    setHomecomingDate(Options)
     setDestinationError(null)
     setOriginError(null)
     await fetch('/api/searchForFlight?', {
@@ -104,6 +113,7 @@ export default function Home() {
           <button type="submit" onClick={() => setOpen(true)} className="text-white bg-gradient-to-br p-4 pl-10 h-14 from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg w-full text-sm px-5 py-2.5 text-center mt-4">Klasa podróży i pasażerowie</button>
           <SearchButton onClick={async () => await search(formData)}/>
         </section>
+        <div id="offers-section"></div>
         {loading && 
         <>
         <p className='p-4 font-bold text-lg text-white'>
@@ -111,7 +121,11 @@ export default function Home() {
         </p>
         <Spinner/> 
         </>}
-        {error && <p className='p-4 font-bold text-lg text-red'>Wystąpił błąd - {error}</p>}
+        {error && 
+        <>
+        <p className='p-4 font-bold text-lg text-red-500'>Wystąpił błąd - {error}</p>
+        <p className='p-4 font-bold text-lg text-white'>Spróbuj odświeżyć!</p>
+        </>}
         {offers && offers.length == 10 &&
         <h1 className='p-4 font-bold text-lg text-white'>Znaleźliśmy dla ciebie ponad {offers?.meta?.count} ofert</h1>
         }

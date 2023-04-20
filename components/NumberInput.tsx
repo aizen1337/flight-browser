@@ -25,7 +25,7 @@ const NumberInput = (props: Props) => {
   }
   return (
     <>
-    <p>{props.type}</p>
+    <p className='text-white font-bold text-lg'>{props.type}</p>
     <div className='flex w-full justify-evenly mt-2'>
     <button type="button" onClick={() => decrement()} className="text-blue-500 border border-blue-500 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xl p-3 text-center inline-flex items-center  dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800 dark:hover:bg-blue-500">
       <svg fill="none" className="w-6 h-6" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">

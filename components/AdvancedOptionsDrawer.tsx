@@ -33,7 +33,7 @@ const AdvancedOptionsDrawer = ({isOpen,setOpen,setQueryOptions}: Props) => {
           <div className='flex flex-col items-center justify-evenly w-4/5'>
             <div className="passengers w-full">
                 <NumberInput type="Dorośli" apiType="adults" onChange={setQueryOptions}/>
-                <NumberInput type="Dzieci" apiType="children"onChange={setQueryOptions}/>
+                <NumberInput type="Dzieci" apiType="children" onChange={setQueryOptions}/>
                 <NumberInput type="Niemowlęta" apiType="infants" onChange={setQueryOptions}/>
             </div>
             <div className="flight-class w-full">
